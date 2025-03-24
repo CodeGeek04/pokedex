@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -186,9 +186,12 @@ const TypePill = ({
   </Button>
 );
 
-// Main Browse Page Component
-export default function BrowsePage() {
+// SearchParams wrapper component
+import { useSearchParams } from "next/navigation";
+
+function BrowseContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   // All available types
   const pokemonTypes = [
@@ -387,12 +390,8 @@ export default function BrowsePage() {
     }
 
     // Update URL
-    window.history.replaceState(
-      {},
-      "",
-      `${window.location.pathname}?${params.toString()}`
-    );
-  }, [currentPage, filters]);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [currentPage, filters, router]);
 
   // Handle page change
   const handlePageChange = (page: number) => {
@@ -490,316 +489,331 @@ export default function BrowsePage() {
   const activeFilterCount = filters.types.length + (filters.search ? 1 : 0);
 
   return (
-    <InlineStyle>
-      <TooltipProvider>
-        <div className="min-h-screen bg-black text-white">
-          {/* Header */}
-          <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-black/90 backdrop-blur supports-[backdrop-filter]:bg-black/60">
-            <div className="container mx-auto px-4 flex h-16 items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/"
-                  className="text-sm font-medium flex items-center gap-1 hover:text-slate-300 transition-colors cursor-pointer"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Back to Home
-                </Link>
-                <h1 className="text-lg font-bold">Browse All Pokémon</h1>
-              </div>
-            </div>
-          </header>
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-black/90 backdrop-blur supports-[backdrop-filter]:bg-black/60">
+        <div className="container mx-auto px-4 flex h-16 items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="text-sm font-medium flex items-center gap-1 hover:text-slate-300 transition-colors cursor-pointer"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back to Home
+            </Link>
+            <h1 className="text-lg font-bold">Browse All Pokémon</h1>
+          </div>
+        </div>
+      </header>
 
-          {/* Main content */}
-          <main className="container mx-auto px-4 py-8">
-            {/* Search and Filter Controls */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <div className="w-full md:w-1/2 lg:w-2/3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <Input
-                    type="search"
-                    placeholder="Search by name or Pokédex number..."
-                    value={filters.search}
-                    onChange={handleSearchChange}
-                    className="pl-10 bg-slate-900 border-slate-700 focus:ring-2 focus:ring-red-500 w-full"
-                  />
+      {/* Main content */}
+      <main className="container mx-auto px-4 py-8">
+        {/* Search and Filter Controls */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="w-full md:w-1/2 lg:w-2/3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                type="search"
+                placeholder="Search by name or Pokédex number..."
+                value={filters.search}
+                onChange={handleSearchChange}
+                className="pl-10 bg-slate-900 border-slate-700 focus:ring-2 focus:ring-red-500 w-full"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {/* Type Filter */}
+            <Popover open={isFilterMenuOpen} onOpenChange={setIsFilterMenuOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="gap-2 bg-slate-900 border-slate-700 cursor-pointer hover:bg-slate-800"
+                >
+                  <Filter className="h-4 w-4" />
+                  Types
+                  {filters.types.length > 0 && (
+                    <Badge className="ml-1 bg-red-500 text-white">
+                      {filters.types.length}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0 bg-slate-900 border-slate-700">
+                <div className="p-4 border-b border-slate-800">
+                  <h3 className="font-medium">Filter by Type</h3>
                 </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {/* Type Filter */}
-                <Popover
-                  open={isFilterMenuOpen}
-                  onOpenChange={setIsFilterMenuOpen}
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="gap-2 bg-slate-900 border-slate-700 cursor-pointer hover:bg-slate-800"
-                    >
-                      <Filter className="h-4 w-4" />
-                      Types
-                      {filters.types.length > 0 && (
-                        <Badge className="ml-1 bg-red-500 text-white">
-                          {filters.types.length}
-                        </Badge>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 p-0 bg-slate-900 border-slate-700">
-                    <div className="p-4 border-b border-slate-800">
-                      <h3 className="font-medium">Filter by Type</h3>
-                    </div>
-                    <div className="p-4 grid grid-cols-2 gap-x-4 gap-y-2 max-h-80 overflow-auto">
-                      {pokemonTypes.map((type) => (
-                        <div key={type} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`type-${type}`}
-                            checked={filters.types.includes(type)}
-                            onCheckedChange={() => handleTypeToggle(type)}
-                            className={`${type}-bg border-0 text-white cursor-pointer`}
-                          />
-                          <Label
-                            htmlFor={`type-${type}`}
-                            className="flex items-center gap-2 cursor-pointer"
-                          >
-                            <span
-                              className={`inline-block w-2 h-2 rounded-full ${type}-bg`}
-                            ></span>
-                            {capitalizeFirstLetter(type)}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="p-4 border-t border-slate-800 flex justify-between">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setFilters((prev) => ({ ...prev, types: [] }));
-                          setIsFilterMenuOpen(false);
-                        }}
-                        disabled={filters.types.length === 0}
-                        className="cursor-pointer disabled:cursor-not-allowed hover:bg-slate-800"
+                <div className="p-4 grid grid-cols-2 gap-x-4 gap-y-2 max-h-80 overflow-auto">
+                  {pokemonTypes.map((type) => (
+                    <div key={type} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`type-${type}`}
+                        checked={filters.types.includes(type)}
+                        onCheckedChange={() => handleTypeToggle(type)}
+                        className={`${type}-bg border-0 text-white cursor-pointer`}
+                      />
+                      <Label
+                        htmlFor={`type-${type}`}
+                        className="flex items-center gap-2 cursor-pointer"
                       >
-                        Clear Types
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => setIsFilterMenuOpen(false)}
-                        className="cursor-pointer hover:bg-red-600"
-                      >
-                        Apply
-                      </Button>
+                        <span
+                          className={`inline-block w-2 h-2 rounded-full ${type}-bg`}
+                        ></span>
+                        {capitalizeFirstLetter(type)}
+                      </Label>
                     </div>
-                  </PopoverContent>
-                </Popover>
-
-                {/* Sort Options */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="gap-2 bg-slate-900 border-slate-700 cursor-pointer hover:bg-slate-800"
-                    >
-                      <ArrowUpDown className="h-4 w-4" />
-                      Sort
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-slate-900 border-slate-700">
-                    <DropdownMenuItem
-                      onClick={() => handleSortChange("id-asc")}
-                      className={`cursor-pointer ${
-                        filters.sort === "id-asc" ? "bg-slate-800" : ""
-                      }`}
-                    >
-                      ID (Ascending)
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleSortChange("id-desc")}
-                      className={`cursor-pointer ${
-                        filters.sort === "id-desc" ? "bg-slate-800" : ""
-                      }`}
-                    >
-                      ID (Descending)
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleSortChange("name-asc")}
-                      className={`cursor-pointer ${
-                        filters.sort === "name-asc" ? "bg-slate-800" : ""
-                      }`}
-                    >
-                      Name (A-Z)
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleSortChange("name-desc")}
-                      className={`cursor-pointer ${
-                        filters.sort === "name-desc" ? "bg-slate-800" : ""
-                      }`}
-                    >
-                      Name (Z-A)
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* Clear All Filters */}
-                {activeFilterCount > 0 && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="gap-2 bg-slate-900 border-slate-700 cursor-pointer hover:bg-slate-800"
-                        onClick={handleClearFilters}
-                      >
-                        <X className="h-4 w-4" />
-                        Clear All
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Remove all filters and search</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
-            </div>
-
-            {/* Active Type Filters - Horizontal Pills */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {pokemonTypes.map((type) => (
-                <TypePill
-                  key={type}
-                  type={type}
-                  active={filters.types.includes(type)}
-                  onClick={() => handleTypeToggle(type)}
-                />
-              ))}
-            </div>
-
-            {/* Results Statistics */}
-            <div className="flex justify-between items-center my-4">
-              <div className="text-sm text-slate-400">
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <RefreshCw className="h-3 w-3 animate-spin" />
-                    Loading Pokémon data...
-                  </div>
-                ) : (
-                  `Showing ${displayedPokemon.length} of ${filteredPokemon.length} Pokémon`
-                )}
-              </div>
-
-              <div className="text-sm text-slate-400">
-                {!isLoading &&
-                  totalPages > 0 &&
-                  `Page ${currentPage} of ${totalPages}`}
-              </div>
-            </div>
-
-            {/* Pokémon Grid */}
-            {isLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {Array(itemsPerPage)
-                  .fill(0)
-                  .map((_, index) => (
-                    <LoadingSkeleton key={index} />
                   ))}
-              </div>
-            ) : filteredPokemon.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {displayedPokemon.map((pokemon) => (
-                  <PokemonBrowseCard key={pokemon.id} pokemon={pokemon} />
-                ))}
+                </div>
+                <div className="p-4 border-t border-slate-800 flex justify-between">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setFilters((prev) => ({ ...prev, types: [] }));
+                      setIsFilterMenuOpen(false);
+                    }}
+                    disabled={filters.types.length === 0}
+                    className="cursor-pointer disabled:cursor-not-allowed hover:bg-slate-800"
+                  >
+                    Clear Types
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => setIsFilterMenuOpen(false)}
+                    className="cursor-pointer hover:bg-red-600"
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Sort Options */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="gap-2 bg-slate-900 border-slate-700 cursor-pointer hover:bg-slate-800"
+                >
+                  <ArrowUpDown className="h-4 w-4" />
+                  Sort
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-slate-900 border-slate-700">
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("id-asc")}
+                  className={`cursor-pointer ${
+                    filters.sort === "id-asc" ? "bg-slate-800" : ""
+                  }`}
+                >
+                  ID (Ascending)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("id-desc")}
+                  className={`cursor-pointer ${
+                    filters.sort === "id-desc" ? "bg-slate-800" : ""
+                  }`}
+                >
+                  ID (Descending)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("name-asc")}
+                  className={`cursor-pointer ${
+                    filters.sort === "name-asc" ? "bg-slate-800" : ""
+                  }`}
+                >
+                  Name (A-Z)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("name-desc")}
+                  className={`cursor-pointer ${
+                    filters.sort === "name-desc" ? "bg-slate-800" : ""
+                  }`}
+                >
+                  Name (Z-A)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Clear All Filters */}
+            {activeFilterCount > 0 && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="gap-2 bg-slate-900 border-slate-700 cursor-pointer hover:bg-slate-800"
+                    onClick={handleClearFilters}
+                  >
+                    <X className="h-4 w-4" />
+                    Clear All
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Remove all filters and search</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+        </div>
+
+        {/* Active Type Filters - Horizontal Pills */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {pokemonTypes.map((type) => (
+            <TypePill
+              key={type}
+              type={type}
+              active={filters.types.includes(type)}
+              onClick={() => handleTypeToggle(type)}
+            />
+          ))}
+        </div>
+
+        {/* Results Statistics */}
+        <div className="flex justify-between items-center my-4">
+          <div className="text-sm text-slate-400">
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <RefreshCw className="h-3 w-3 animate-spin" />
+                Loading Pokémon data...
               </div>
             ) : (
-              <div className="text-center py-20 bg-slate-900/30 rounded-lg border border-slate-800">
-                <div className="mb-4 text-lg font-medium">
-                  No Pokémon found matching your criteria
-                </div>
-                <Button
-                  onClick={handleClearFilters}
-                  className="cursor-pointer bg-red-500 hover:bg-red-600"
-                >
-                  Clear All Filters
-                </Button>
-              </div>
+              `Showing ${displayedPokemon.length} of ${filteredPokemon.length} Pokémon`
             )}
+          </div>
 
-            {/* Pagination */}
-            {!isLoading && totalPages > 1 && (
-              <div className="mt-8 flex flex-wrap justify-center items-center gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handlePageChange(1)}
-                      disabled={currentPage === 1}
-                      className="bg-slate-900 border-slate-700 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      <ChevronLeft className="h-4 w-4 mr-0" />
-                      <ChevronLeft className="h-4 w-4 ml-[-14px]" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>First page</TooltipContent>
-                </Tooltip>
+          <div className="text-sm text-slate-400">
+            {!isLoading &&
+              totalPages > 0 &&
+              `Page ${currentPage} of ${totalPages}`}
+          </div>
+        </div>
 
+        {/* Pokémon Grid */}
+        {isLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {Array(itemsPerPage)
+              .fill(0)
+              .map((_, index) => (
+                <LoadingSkeleton key={index} />
+              ))}
+          </div>
+        ) : filteredPokemon.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {displayedPokemon.map((pokemon) => (
+              <PokemonBrowseCard key={pokemon.id} pokemon={pokemon} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 bg-slate-900/30 rounded-lg border border-slate-800">
+            <div className="mb-4 text-lg font-medium">
+              No Pokémon found matching your criteria
+            </div>
+            <Button
+              onClick={handleClearFilters}
+              className="cursor-pointer bg-red-500 hover:bg-red-600"
+            >
+              Clear All Filters
+            </Button>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!isLoading && totalPages > 1 && (
+          <div className="mt-8 flex flex-wrap justify-center items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => handlePageChange(currentPage - 1)}
+                  onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
                   className="bg-slate-900 border-slate-700 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 mr-0" />
+                  <ChevronLeft className="h-4 w-4 ml-[-14px]" />
                 </Button>
+              </TooltipTrigger>
+              <TooltipContent>First page</TooltipContent>
+            </Tooltip>
 
-                <div className="flex flex-wrap gap-2">
-                  {paginationRange.map((page) => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="icon"
-                      onClick={() => handlePageChange(page)}
-                      className={`cursor-pointer ${
-                        currentPage === page
-                          ? "bg-red-500 hover:bg-red-600 border-red-500"
-                          : "bg-slate-900 border-slate-700 hover:bg-slate-800"
-                      }`}
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="bg-slate-900 border-slate-700 cursor-pointer disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
 
+            <div className="flex flex-wrap gap-2">
+              {paginationRange.map((page) => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => handlePageChange(page)}
+                  className={`cursor-pointer ${
+                    currentPage === page
+                      ? "bg-red-500 hover:bg-red-600 border-red-500"
+                      : "bg-slate-900 border-slate-700 hover:bg-slate-800"
+                  }`}
+                >
+                  {page}
+                </Button>
+              ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="bg-slate-900 border-slate-700 cursor-pointer disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => handlePageChange(currentPage + 1)}
+                  onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
                   className="bg-slate-900 border-slate-700 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 ml-0" />
+                  <ChevronRight className="h-4 w-4 ml-[-14px]" />
                 </Button>
+              </TooltipTrigger>
+              <TooltipContent>Last page</TooltipContent>
+            </Tooltip>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
 
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handlePageChange(totalPages)}
-                      disabled={currentPage === totalPages}
-                      className="bg-slate-900 border-slate-700 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      <ChevronRight className="h-4 w-4 ml-0" />
-                      <ChevronRight className="h-4 w-4 ml-[-14px]" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Last page</TooltipContent>
-                </Tooltip>
+// Main component with Suspense
+export default function BrowsePage() {
+  return (
+    <InlineStyle>
+      <TooltipProvider>
+        <Suspense
+          fallback={
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+              <div className="flex items-center gap-2">
+                <RefreshCw className="h-5 w-5 animate-spin" />
+                <p>Loading Pokédex...</p>
               </div>
-            )}
-          </main>
-        </div>
+            </div>
+          }
+        >
+          <BrowseContent />
+        </Suspense>
       </TooltipProvider>
     </InlineStyle>
   );
