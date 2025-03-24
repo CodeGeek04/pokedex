@@ -149,54 +149,59 @@ export default function AboutPage() {
 
               <Card className="bg-slate-900 border-slate-800">
                 <CardHeader>
-                  <CardTitle>Team</CardTitle>
+                  <CardTitle>Developer</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="mb-6">
-                    Modern Pokédex is a passion project created by a team of
-                    Pokémon enthusiasts who are also developers, designers, and
-                    content creators.
+                    Modern Pokédex is a passion project created by Shivam
+                    Mittal, a developer and Pokémon enthusiast.
                   </p>
-                  <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-                    <div className="text-center">
-                      <div className="relative h-24 w-24 mx-auto mb-3 rounded-full overflow-hidden bg-slate-800">
+                  <div className="flex justify-center">
+                    <div className="text-center max-w-xs">
+                      <div className="relative h-32 w-32 mx-auto mb-4 rounded-full overflow-hidden bg-slate-800 border-2 border-red-500">
                         <Image
-                          src="/placeholder/96/96"
-                          alt="Developer"
+                          src="https://lh3.googleusercontent.com/a/ACg8ocI4ARDkH-nbQZQ-cYJ51E5j5wt8E_ODRuaDtbuM0nIc21owDEKQ=s192-c-rg-br100"
+                          alt="Shivam Mittal"
                           fill
                           className="object-cover"
                         />
                       </div>
-                      <h3 className="font-medium">Lead Developer</h3>
-                      <p className="text-sm text-slate-400">
-                        Frontend & Backend
+                      <h3 className="text-xl font-medium">Shivam Mittal</h3>
+                      <p className="text-sm text-slate-400 mb-2">
+                        Full Stack Developer
                       </p>
-                    </div>
-                    <div className="text-center">
-                      <div className="relative h-24 w-24 mx-auto mb-3 rounded-full overflow-hidden bg-slate-800">
-                        <Image
-                          src="/placeholder/96/96"
-                          alt="Designer"
-                          fill
-                          className="object-cover"
-                        />
+                      <div className="flex justify-center gap-3 mt-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          asChild
+                        >
+                          <a
+                            href="https://shivammittal.in"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Globe className="h-4 w-4" />
+                            Website
+                          </a>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          asChild
+                        >
+                          <a
+                            href="https://github.com/CodeGeek04"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Github className="h-4 w-4" />
+                            GitHub
+                          </a>
+                        </Button>
                       </div>
-                      <h3 className="font-medium">UI/UX Designer</h3>
-                      <p className="text-sm text-slate-400">
-                        Interface & Experience
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <div className="relative h-24 w-24 mx-auto mb-3 rounded-full overflow-hidden bg-slate-800">
-                        <Image
-                          src="/placeholder/96/96"
-                          alt="Content"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <h3 className="font-medium">Content Creator</h3>
-                      <p className="text-sm text-slate-400">Data & Research</p>
                     </div>
                   </div>
                 </CardContent>
@@ -204,36 +209,36 @@ export default function AboutPage() {
 
               <Card className="bg-slate-900 border-slate-800">
                 <CardHeader>
-                  <CardTitle>Contact & Connect</CardTitle>
+                  <CardTitle>Project Repository</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap justify-center gap-4">
-                    <Button variant="outline" className="gap-2" asChild>
-                      <a
-                        href="https://github.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                  <div className="flex flex-col items-center gap-4">
+                    <p>
+                      This project is open source and available on GitHub. Feel
+                      free to contribute, report issues, or fork the repository
+                      to create your own version.
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-4 mt-2">
+                      <Button
+                        className="bg-slate-800 hover:bg-slate-700 gap-2"
+                        asChild
                       >
-                        <Github className="h-5 w-5" />
-                        GitHub
-                      </a>
-                    </Button>
-                    <Button variant="outline" className="gap-2" asChild>
-                      <a
-                        href="https://pokeapi.co"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        <a
+                          href="https://github.com/CodeGeek04/pokedex"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Github className="h-5 w-5" />
+                          View on GitHub
+                        </a>
+                      </Button>
+                      <Button
+                        className="bg-red-500 hover:bg-red-600 gap-2"
+                        asChild
                       >
-                        <Globe className="h-5 w-5" />
-                        PokéAPI
-                      </a>
-                    </Button>
-                    <Button
-                      className="bg-red-500 hover:bg-red-600 gap-2"
-                      asChild
-                    >
-                      <Link href="/privacy">Privacy Policy</Link>
-                    </Button>
+                        <Link href="/privacy">Privacy Policy</Link>
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -280,7 +285,7 @@ export default function AboutPage() {
                   PokeAPI
                 </Link>
                 <Link
-                  href="https://github.com"
+                  href="https://github.com/CodeGeek04/pokedex"
                   target="_blank"
                   className="text-sm text-slate-400 hover:text-white transition-colors"
                 >
