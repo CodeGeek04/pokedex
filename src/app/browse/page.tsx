@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,11 +83,6 @@ const capitalizeFirstLetter = (string: string): string => {
 
 const formatPokemonNumber = (id: number): string => {
   return `#${id.toString().padStart(3, "0")}`;
-};
-
-const getPokemonIdFromUrl = (url: string): number => {
-  const parts = url.split("/");
-  return parseInt(parts[parts.length - 2]);
 };
 
 // Pokemon Card Component
@@ -194,7 +188,6 @@ const TypePill = ({
 
 // Main Browse Page Component
 export default function BrowsePage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // All available types

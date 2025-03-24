@@ -1,10 +1,6 @@
 "use server";
 
-import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Define types for our chat functionality
 export interface ChatMessage {
